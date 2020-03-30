@@ -3,5 +3,5 @@ This is a python code to generate Optimal Channel Networks (OCNs) from random in
 
 # Citation
 
-#References
+# References
 
