@@ -3,5 +3,5 @@ This is a python code to generate Optimal Channel Networks (OCNs) from random in
 
 # Citation
 
-# References
+Hooshyar, Milad, Shashank Anand, and Amilcare Porporato. "Variational analysis of landscape elevation and drainage networks." Proceedings of the Royal Society A 476.2239 (2020): 20190775.
 
