@@ -3,7 +3,7 @@ import numpy as np
 
 
 # Size of the domain (grid size)
-domain_size = (100, 100)
+domain_size = (50, 50)
 
 # The exponent m
 m = 0.5
@@ -18,7 +18,8 @@ if __name__ == "__main__":
                              initial_max_elevation=0.1,
                              initial_std=0.001)
     OCN.initiate()
-    OCN.optimize(max_itr_no_imp=10)
+    OCN.local_network()
+    OCN.optimize(max_itr_no_imp=500)
     OCN.plot_results()
 
 

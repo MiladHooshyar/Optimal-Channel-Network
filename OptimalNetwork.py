@@ -21,6 +21,7 @@ class OCN:
         self.m = m_exponent
         self.H_list = []
         self.H_opt_list = []
+        self.Porp_head = []
 
     def initiate_elevation(self):
         """
@@ -259,26 +260,70 @@ class OCN:
             if (min_flag is True and H < H_opt) or (min_flag is False and H > H_opt):
                 H_opt = H
                 t_no_imp = 0
+                ph = np.where(self.mg['drainage_area'] == 1, 1, 0).sum() / len(self.mg['drainage_area'])
             else:
                 t_no_imp += 1
                 self.mg = copy.deepcopy(mg_org)
 
             self.H_opt_list.append(H_opt)
             self.H_list.append(H)
+            self.Porp_head.append(ph)
+            if t % 100 == 0:
+                ev = self.local_network()
+                most_comm_ev = ev[0][0]
+                num_evs = len(ev)
+                frq = ev[0][1] / len(self.mg['node_id'])
+
+                print('Trail: ', t, 'Obj: ', int(H_opt), 'HR: ', int(ph * 100.), )
+                print('MCEV: ', most_comm_ev, 'NEV: ', num_evs, 'FEV: ', int(frq * 100))
 
     def plot_results(self):
-        plt.figure(figsize=(10, 3))
-        plt.subplot(121)
+        plt.figure(figsize=(10, 6))
+
+        ################
+        plt.subplot(221)
         plt.title(' Log of area')
         plt.imshow(np.log(self.mg['drainage_area'].reshape(self.domain_size)))
         plt.xlabel('X')
         plt.ylabel('Y')
-        plt.subplot(122)
+
+        ################
+        plt.subplot(222)
         plt.title('Optimization')
         plt.plot(self.H_opt_list, '-k', lw=1., label='Optimal')
-        plt.plot(self.H_list, '-r', lw=0.1, alpha=0.2, label='Tried')
+        plt.plot(self.H_list, '-r', lw=0.1, alpha=1., label='Tried')
         plt.xlabel('Trail')
         plt.ylabel('Objective function')
         plt.legend()
+
+        ################
+        plt.subplot(223)
+        plt.title('Optimization')
+        plt.plot(self.Porp_head, '-k', lw=1., label='Optimal')
+        plt.xlabel('Trail')
+        plt.ylabel('Head ratio')
+        plt.legend()
+
         plt.tight_layout()
         plt.show()
+
+    def local_network(self):
+        eigen_count = {}
+        for node in self.mg['node_id']:
+            adj_metrix = np.zeros((9, 9))
+            neis = self.mg['neighbour'][node]
+            for i, n_s in enumerate(neis):
+                adj_metrix[i, i] = 1
+                for j, n_d in enumerate(neis):
+                    if n_s == self.mg['receiver'][n_d]:
+                        adj_metrix[i, j], adj_metrix[j, i] = 1, 1
+
+            w = np.linalg.eigvalsh(adj_metrix)
+            w = sorted(list(set(np.round(w, 2))))
+            w = ','.join([str(x) for x in w])
+            eigen_count[w] = eigen_count.get(w, 0) + 1
+
+        eigen_count = [(ky, vl) for ky, vl in eigen_count.items()]
+        eigen_count = sorted(eigen_count, key=lambda x: -x[1])
+
+        return eigen_count
