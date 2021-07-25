@@ -1,5 +1,14 @@
 # Optimal Channel Network
-This is a python code to generate Optimal Channel Networks (OCNs) from random initial network. This code uses Landlab (https://github.com/landlab/landlab) functionalityies for stroring and processing rasters. The Optimization algorithm is greedy which changes the confirguration as long as it reduces the opbjective functional. The Rolling windwo function is from https://gist.github.com/seberg/3866040l. 
+This is a python code to generate Optimal Channel Networks (OCNs) from random initial network. The Optimization algorithm is greedy which changes the configuration as long as it reduces the objective functional. The Rolling window function is from https://gist.github.com/seberg/3866040l. 
+
+# Installation
+
+`conda env create -f environment.yml`
+
+`conda activate conda activate ocn_env`
+
+`python main.py`
+
 
 # Citation
 
